@@ -6,7 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import tmall.bean.Category;
+import tmall.bean.Product;
 import tmall.bean.Property;
+import tmall.bean.PropertyValue;
 import tmall.dao.CategoryDAO;
 import tmall.util.Page;
 
@@ -41,8 +43,24 @@ public class PropertyServlet extends BaseBackServlet {
 		request.setAttribute("p", p);
 		return "admin/editProperty.jsp";		
 	}
-
 	
+	public String editPropertyValue(HttpServletRequest request,HttpServletResponse response,Page page){
+		int id = Integer.parseInt(request.getParameter("id"));
+		Product p = productDAO.get(id);
+		request.setAttribute("p", p);
+		return "admin/editProduct.jsp";
+	}
+	
+	public String updatePropertyValue(HttpServletRequest request,HttpServletResponse response,Page page){
+		int pvid = Integer.parseInt(request.getParameter("pvid"));
+        String value = request.getParameter("value");
+         
+        PropertyValue pv =propertyValueDAO.get(pvid);
+        pv.setValue(value);
+        propertyValueDAO.update(pv);
+        return "%success";
+		
+	}
 	public String update(HttpServletRequest request, HttpServletResponse response, Page page) {
 		int cid = Integer.parseInt(request.getParameter("cid"));
 		Category c = categoryDAO.get(cid);
