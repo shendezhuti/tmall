@@ -17,7 +17,7 @@ public class Product {
 	private List<ProductImage> productImages;
 	private List<ProductImage> productSingleImages;
 	private List<ProductImage> productDetailImages;
-	private int reviewCount;
+	private int reviewCount;//reviewCount和saleCount这两个字段分别表示评价数量和销售数量，并不是在数据库中对应的字段
 	private int saleCount;
 
 	public String getName() {

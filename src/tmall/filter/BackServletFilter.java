@@ -26,7 +26,9 @@ public class BackServletFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) res;
 		
-		String contextPath=request.getServletContext().getContextPath();
+		//这里的路径是/tmall
+		String contextPath=request.getServletContext().getContextPath(); 
+		// 这里的uri是 /tmall/admin_category_list
 		String uri = request.getRequestURI();
 		uri =StringUtils.remove(uri, contextPath);
 		if(uri.startsWith("/admin_")){		

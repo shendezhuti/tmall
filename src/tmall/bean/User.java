@@ -24,6 +24,8 @@ public class User {
 	public void setName(String name) {
 		this.name = name;
 	}
+	//获取本用户的匿名名称，在评价的时候显示用户名使用
+	//如果用户名是shen，就变成s**n,用户名为s,变成*,用户名为sh，变成s*
 	public String getAnonymousName(){
 		if(null==name)
 			return null;
