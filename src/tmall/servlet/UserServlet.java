@@ -33,7 +33,14 @@ public class UserServlet extends BaseBackServlet {
 		return null;
 	}
 
-	
+	/**
+	 * 1.借助userDAO查询用户集合
+	 * 2.设置分页信息
+	 * 3.把用户集合设置到request的“us”属性上
+	 * 4.把分页对象设置到request的“page”属性上
+	 * 5.服务端跳转到admin/listUser.jsp页面
+	 * 6.在listUser.jsp用c:forEach遍历“us”集合
+	 */
 	public String list(HttpServletRequest request, HttpServletResponse response, Page page) {
 		List<User> us = userDAO.list(page.getStart(),page.getCount());
 		int total = userDAO.getTotal();

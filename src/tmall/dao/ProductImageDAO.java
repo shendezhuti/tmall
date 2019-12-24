@@ -1,6 +1,7 @@
 package tmall.dao;
 
 
+import java.lang.Thread.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,11 +38,8 @@ public class ProductImageDAO {
     }
  
     public void add(ProductImage bean) {
-
-
-
         String sql = "insert into ProductImage values(null,?,?)";
-        try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
+        try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, bean.getProduct().getId());
             ps.setString(2, bean.getType());
             ps.execute();
@@ -77,16 +75,10 @@ public class ProductImageDAO {
  
     public ProductImage get(int id) {
         ProductImage bean = new ProductImage();
-
-        
-        
-        
         try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement();) {
  
             String sql = "select * from ProductImage where id = " + id;
- 
             ResultSet rs = s.executeQuery(sql);
- 
             if (rs.next()) {
                 int pid = rs.getInt("pid");
                 String type = rs.getString("type");
@@ -116,24 +108,17 @@ public class ProductImageDAO {
  
             ps.setInt(1, p.getId());
             ps.setString(2, type);
- 
             ps.setInt(3, start);
             ps.setInt(4, count);
-            
-            
-            
+                                 
             ResultSet rs = ps.executeQuery();
  
             while (rs.next()) {
-
                 ProductImage bean = new ProductImage();
                 int id = rs.getInt(1);
-
-
                 bean.setProduct(p);
                 bean.setType(type);
-                bean.setId(id);
-                  
+                bean.setId(id);                  
                 beans.add(bean);
             }
         } catch (SQLException e) {

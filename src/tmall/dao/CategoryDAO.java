@@ -14,31 +14,33 @@ import tmall.util.DBUtil;
 public class CategoryDAO {
  
     public int getTotal() {
-        int total = 0;
-        try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement();) {
- 
-            String sql = "select count(*) from Category";
- 
-            ResultSet rs = s.executeQuery(sql);
-            while (rs.next()) {
-                total = rs.getInt(1);
-            }
-        } catch (SQLException e) {
- 
-            e.printStackTrace();
-        }
+        int total=0;
+        try(Connection c=DBUtil.getConnection(); Statement statement = c.createStatement()){
+        	
+        	String sql = "select count(*) from Category";
+        	ResultSet resultSet = statement.executeQuery(sql);
+        	while(resultSet.next()){
+        		total = resultSet.getInt(1);
+        	}
+        	
+        	
+        }catch (SQLException e) {
+			// TODO: handle exception
+		}
         return total;
     }
  
+    /**
+     * 
+     * @param bean
+     */
     public void add(Category bean) {
  
         String sql = "insert into category values(null,?)";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);) {
- 
+        	
             ps.setString(1, bean.getName());
- 
             ps.execute();
- 
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 int id = rs.getInt(1);

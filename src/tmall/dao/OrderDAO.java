@@ -223,6 +223,12 @@ public class OrderDAO {
         return beans;
     }
     
+    /**
+     * 查询指定用户的订单（去掉某种订单状态，通常是"delete")
+     * @param uid
+     * @param excludedStatus
+     * @return
+     */
     public List<Order> list(int uid,String excludedStatus) {
         return list(uid,excludedStatus,0, Short.MAX_VALUE);
     }

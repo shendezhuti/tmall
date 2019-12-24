@@ -1,10 +1,10 @@
 package tmall.util;
 
 public class Page {
-	int start;
-	int count;
-	int total;
-	String param;
+	int start;//开始位置
+	int count;//每页显示的数量
+	int total;//总共有多少条数据
+	String param;//参数
 	public int getStart() {
 		return start;
 	}

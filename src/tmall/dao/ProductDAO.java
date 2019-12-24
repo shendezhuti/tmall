@@ -16,7 +16,11 @@ import tmall.util.DBUtil;
 import tmall.util.DateUtil;
   
 public class ProductDAO {
-  
+  /**
+   * 获取某种分类下的产品的数量
+   * @param cid
+   * @return
+   */
     public int getTotal(int cid) {
         int total = 0;
         try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement();) {
@@ -133,6 +137,11 @@ public class ProductDAO {
         return bean;
     }
   
+    /**
+     * 查询分类下的产品
+     * @param cid
+     * @return
+     */
     public List<Product> list(int cid) {
         return list(cid,0, Short.MAX_VALUE);
     }
@@ -221,15 +230,24 @@ public class ProductDAO {
         return beans;
     }    
  
+   /**
+    * 为分类填充产品集合 
+    * @param cs
+    */
     public void fill(List<Category> cs) {
         for (Category c : cs) 
             fill(c);
     }
+   
     public void fill(Category c) {
             List<Product> ps = this.list(c.getId());
             c.setProducts(ps);
     }
  
+    /**
+     * 为多个分类设置productsByRow属性
+     * @param cs
+     */
     public void fillByRow(List<Category> cs) {
         int productNumberEachRow = 8;
         for (Category c : cs) {
@@ -237,20 +255,27 @@ public class ProductDAO {
             List<List<Product>> productsByRow =  new ArrayList<>();
             for (int i = 0; i < products.size(); i+=productNumberEachRow) {
                 int size = i+productNumberEachRow;
-                size= size>products.size()?products.size():size;
+                size= size>products.size()? products.size():size;
                 List<Product> productsOfEachRow =products.subList(i, size);
                 productsByRow.add(productsOfEachRow);
             }
             c.setProductsByRow(productsByRow);
         }
     }
-     
+    /**
+     * 一个产品有多个图片，但是只有一个主图片，把第一个图片设置为主图片
+     * @param p
+     */
     public void setFirstProductImage(Product p) {
         List<ProductImage> pis= new ProductImageDAO().list(p, ProductImageDAO.type_single);
         if(!pis.isEmpty())
             p.setFirstProductImage(pis.get(0));     
     }
      
+    /**
+     *为产品设置销售和评价数量
+     * @param p
+     */
     public void setSaleAndReviewNumber(Product p) {
         int saleCount = new OrderItemDAO().getSaleCount(p.getId());
         p.setSaleCount(saleCount);          
@@ -266,20 +291,24 @@ public class ProductDAO {
         }
     }
  
+    /**
+     * 根据关键字查询产品
+     * @param keyword
+     * @param start
+     * @param count
+     * @return
+     */
     public List<Product> search(String keyword, int start, int count) {
          List<Product> beans = new ArrayList<Product>();
-          
          if(null==keyword||0==keyword.trim().length())
              return beans;
             String sql = "select * from Product where name like ? limit ?,? ";
-      
             try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
                 ps.setString(1, "%"+keyword.trim()+"%");
                 ps.setInt(2, start);
                 ps.setInt(3, count);
       
                 ResultSet rs = ps.executeQuery();
-      
                 while (rs.next()) {
                     Product bean = new Product();
                     int id = rs.getInt(1);

@@ -27,7 +27,15 @@ public class ForeServletFilter implements Filter{
 		
 	}
 
-	
+	/**
+	 * 1.首先在web.xml配置文件中，让所有的请求都会经过ForeServletFilter
+	 * 2.还是假设访问路径是 localhost:8079/tmall/forehome
+	 * 3.在ForeServlet中通过request.getRequestRUI()取出访问的uri:/tmall/forehome
+	 * 4.然后截掉/tamll,得到路径/forehome
+	 * 5.判断其是否以/fore开头，并且不是/foreServlet开头
+	 * 6.如果是，取出fore之后的值home，并且服务端跳转到foreServlet
+	 * 7.在跳转之前，还取出后home字符串，然后通过request.setAttribute的方法，借助服务端跳转，传递到foreServlet里面去
+	 */
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
@@ -52,6 +60,7 @@ public class ForeServletFilter implements Filter{
 			request.setAttribute("cs", cs);			
 		}
 		
+		//   /tmall/forehome
 		String uri = request.getRequestURI();
 		uri =StringUtils.remove(uri, contextPath);
 		if(uri.startsWith("/fore")&&!uri.startsWith("/foreServlet")){

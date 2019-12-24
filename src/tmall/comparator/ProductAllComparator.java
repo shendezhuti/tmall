@@ -4,6 +4,11 @@ import java.util.Comparator;
 
 import tmall.bean.Product;
 
+/**
+ * 综合比较器，把销量*评价高的放在前面
+ * @author hzx
+ *
+ */
 public class ProductAllComparator implements Comparator<Product>{
 
 	@Override

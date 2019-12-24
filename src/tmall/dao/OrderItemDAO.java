@@ -37,14 +37,11 @@ public class OrderItemDAO {
  
     public void add(OrderItem bean) {
 
-
-
         String sql = "insert into OrderItem values(null,?,?,?,?)";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
  
             ps.setInt(1, bean.getProduct().getId());
-            
-            //订单项在创建的时候，是没有蒂订单信息的
+            //订单项在创建的时候，是没有订单信息的
             if(null==bean.getOrder())
             	ps.setInt(2, -1);
             else
@@ -143,6 +140,13 @@ public class OrderItemDAO {
         return listByUser(uid, 0, Short.MAX_VALUE);
     }
  
+    /**
+     * 查询某个用户的未生成订单的订单项（即购物车中的订单项）
+     * @param uid
+     * @param start
+     * @param count
+     * @return
+     */
     public List<OrderItem> listByUser(int uid, int start, int count) {
         List<OrderItem> beans = new ArrayList<OrderItem>();
  
@@ -185,15 +189,20 @@ public class OrderItemDAO {
         }
         return beans;
     }
+    
     public List<OrderItem> listByOrder(int oid) {
     	return listByOrder(oid, 0, Short.MAX_VALUE);
     }
-    
+    /**
+     * 查询某种订单下所有的订单项
+     * @param oid
+     * @param start
+     * @param count
+     * @return
+     */
     public List<OrderItem> listByOrder(int oid, int start, int count) {
     	List<OrderItem> beans = new ArrayList<OrderItem>();
-    	
-    	String sql = "select * from OrderItem where oid = ? order by id desc limit ?,? ";
-    	
+        	String sql = "select * from OrderItem where oid = ? order by id desc limit ?,? ";	
     	try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
     		
     		ps.setInt(1, oid);
@@ -209,8 +218,7 @@ public class OrderItemDAO {
     			int pid = rs.getInt("pid");
     			int uid = rs.getInt("uid");
     			int number = rs.getInt("number");
-    			
-    			
+    		    			
     			Product product = new ProductDAO().get(pid);
     			if(-1!=oid){
     				Order order= new OrderDAO().get(oid);
@@ -231,7 +239,11 @@ public class OrderItemDAO {
     	}
     	return beans;
     }
-
+    
+    /**
+     * 为订单设置订单项集合
+     * @param os
+     */
 	public void fill(List<Order> os) {
 		for (Order o : os) {
 			List<OrderItem> ois=listByOrder(o.getId());
@@ -246,10 +258,12 @@ public class OrderItemDAO {
 			o.setTotalNumber(totalNumber);
 		}
 		
-		
-		
 	}
 
+	/**
+	 * 为订单设置订单项集合
+	 * @param o
+	 */
 	public void fill(Order o) {
 		List<OrderItem> ois=listByOrder(o.getId());
 		float total = 0;
@@ -264,6 +278,7 @@ public class OrderItemDAO {
         return listByProduct(pid, 0, Short.MAX_VALUE);
     }
  
+    
     public List<OrderItem> listByProduct(int pid, int start, int count) {
         List<OrderItem> beans = new ArrayList<OrderItem>();
  
@@ -284,8 +299,7 @@ public class OrderItemDAO {
                 int uid = rs.getInt("uid");
                 int oid = rs.getInt("oid");
                 int number = rs.getInt("number");
-                
-              
+                            
                 Product product = new ProductDAO().get(pid);
                 if(-1!=oid){
                     Order order= new OrderDAO().get(oid);
@@ -307,12 +321,15 @@ public class OrderItemDAO {
         return beans;
     }
 
+    /**
+     * 获取某一种产品的销量，产品的销量就是这种产品对应的订单项OrderItem的number字段的总和
+     * @param pid
+     * @return
+     */
 	public int getSaleCount(int pid) {
 		 int total = 0;
 	        try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement();) {
-	 
 	            String sql = "select sum(number) from OrderItem where pid = " + pid;
-	 
 	            ResultSet rs = s.executeQuery(sql);
 	            while (rs.next()) {
 	                total = rs.getInt(1);

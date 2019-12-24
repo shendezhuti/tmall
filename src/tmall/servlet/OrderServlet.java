@@ -21,6 +21,20 @@ public class OrderServlet extends BaseBackServlet {
 	public String delete(HttpServletRequest request, HttpServletResponse response, Page page) {
 		return null;
 	}
+	
+	/**
+	 * 当订货状态是waitDeliver的时候，就会出现发货按钮
+	 * 1.发货按钮连接跳转到admin_order_deliver
+	 * 2.OrderServlet.delivery()方法被调用
+	 * 	2.1根据id获取order对象
+	 * 	2.2修改发货时间、设置发货状态
+	 * 	2.3更新到数据库
+	 * 	2.4客户端跳转到admin_order_list页面
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
 	public String delivery(HttpServletRequest request, HttpServletResponse response, Page page) {
 		int id = Integer.parseInt(request.getParameter("id"));
 		Order o = orderDAO.get(id);
@@ -40,7 +54,14 @@ public class OrderServlet extends BaseBackServlet {
 		return null;
 	}
 
-	
+
+	/**
+	 * 1.分页查询订单信息
+	 * 2.借助orderItemDAO.fill()方法为这些订单填充上orderItems信息
+	 * 3.服务端跳转到admin/listOrder.jsp页面
+	 * 4.在listOrder.jsp借助 c:forEach 把订单集合遍历出来
+	 * 5.遍历订单的时候，再把当前订单的orderItem订单项集合遍历出来
+	 */
 	public String list(HttpServletRequest request, HttpServletResponse response, Page page) {
 		List<Order> os = orderDAO.list(page.getStart(),page.getCount());
 		orderItemDAO.fill(os);

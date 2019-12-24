@@ -112,6 +112,12 @@ public class PropertyValueDAO {
         }
         return bean;
     }
+    /**
+     * 根据属性id和产品id，获取一个PropertyValue对象
+     * @param ptid
+     * @param pid
+     * @return
+     */
     public PropertyValue get(int ptid, int pid ) {
         PropertyValue bean = null;
          
@@ -124,9 +130,7 @@ public class PropertyValueDAO {
             if (rs.next()) {
                 bean= new PropertyValue();
                 int id = rs.getInt("id");
- 
                 String value = rs.getString("value");
-                 
                 Product product = new ProductDAO().get(pid);
                 Property property = new PropertyDAO().get(ptid);
                 bean.setProduct(product);
@@ -181,6 +185,15 @@ public class PropertyValueDAO {
         return beans;
     }
  
+    /**
+     * 初始化某个产品对应的属性值，
+     * 初始化逻辑：
+     * 1.根据分类获取所有的属性
+     * 2.遍历每一个属性
+     * 2.1根据属性和产品，获取属性值
+     * 2.2如果属性值不存在，就创建一个属性值对象
+     * @param p
+     */
     public void init(Product p) {
         List<Property> pts= new PropertyDAO().list(p.getCategory().getId());
          
@@ -195,6 +208,11 @@ public class PropertyValueDAO {
         }
     }
  
+    /**
+     * 查询某个产品下所有的属性值
+     * @param pid
+     * @return
+     */
     public List<PropertyValue> list(int pid) {
         List<PropertyValue> beans = new ArrayList<PropertyValue>();
          

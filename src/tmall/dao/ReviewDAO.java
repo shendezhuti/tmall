@@ -142,10 +142,20 @@ public class ReviewDAO {
         return bean;
     }
  
+    /**
+     * 获取指定产品的评价
+     * @param pid
+     * @return
+     */
     public List<Review> list(int pid) {
         return list(pid, 0, Short.MAX_VALUE);
     }
  
+    /**
+     * 获取指定产品一共有多少条评价
+     * @param pid
+     * @return
+     */
     public int getCount(int pid) {
         String sql = "select count(*) from Review where pid = ? ";
  
@@ -163,6 +173,7 @@ public class ReviewDAO {
         }
         return 0;    	
     }
+    
     public List<Review> list(int pid, int start, int count) {
         List<Review> beans = new ArrayList<Review>();
  
@@ -173,22 +184,17 @@ public class ReviewDAO {
             ps.setInt(1, pid);
             ps.setInt(2, start);
             ps.setInt(3, count);
- 
             ResultSet rs = ps.executeQuery();
- 
+
             while (rs.next()) {
                 Review bean = new Review();
                 int id = rs.getInt(1);
-
                 int uid = rs.getInt("uid");
                 Date createDate = DateUtil.t2d(rs.getTimestamp("createDate"));
                 
-                String content = rs.getString("content");
-                
+                String content = rs.getString("content");           
                 Product product = new ProductDAO().get(pid);
-                User user = new UserDAO().get(uid);
-                
-                
+                User user = new UserDAO().get(uid);                               
                 bean.setContent(content);
                 bean.setCreateDate(createDate);
                 bean.setId(id);     

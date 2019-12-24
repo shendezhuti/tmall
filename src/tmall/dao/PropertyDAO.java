@@ -17,6 +17,11 @@ import tmall.util.DateUtil;
  
 public class PropertyDAO {
 
+	/**
+	 * 获取某种分类下的属性总数，在分页的时候会用到
+	 * @param cid
+	 * @return
+	 */
     public int getTotal(int cid) {
         int total = 0;
         try (Connection c = DBUtil.getConnection(); Statement s = c.createStatement();) {
@@ -35,9 +40,6 @@ public class PropertyDAO {
     }
  
     public void add(Property bean) {
-
-
-
 
         String sql = "insert into Property values(null,?,?)";
         try (Connection c = DBUtil.getConnection(); PreparedStatement ps = c.prepareStatement(sql);) {
@@ -143,6 +145,11 @@ public class PropertyDAO {
         return bean;
     }
  
+    /**
+     * 查询某个分类下的属性对象
+     * @param cid
+     * @return
+     */
     public List<Property> list(int cid) {
         return list(cid, 0, Short.MAX_VALUE);
     }

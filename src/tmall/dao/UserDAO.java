@@ -145,6 +145,11 @@ public class UserDAO {
         return beans;
     }
 
+    /**
+     * 判断用户是否存在
+     * @param name
+     * @return
+     */
 	public boolean isExist(String name) {
 		User user = get(name);
 		return user!=null;
@@ -175,6 +180,12 @@ public class UserDAO {
         return bean;
 	}
 
+	/**
+	 * 通过账号和密码获取对象，这才是合理的判断账号密码是否正确的方式，而不是一下把所有的用户信息查出来
+	 * @param name
+	 * @param password
+	 * @return
+	 */
 	public User get(String name, String password) {
 		User bean = null;
 		 

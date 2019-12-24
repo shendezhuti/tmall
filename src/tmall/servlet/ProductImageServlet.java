@@ -20,6 +20,19 @@ import tmall.util.ImageUtil;
 import tmall.util.Page;
 
 public class ProductImageServlet extends BaseBackServlet {
+	
+	/**
+	 *  1. parseUpload 获取上传文件的输入流
+		2. parseUpload 方法会修改params 参数，并且把浏览器提交的type,pid信息放在其中
+		3. 从params 中取出type,pid信息，并根据这个type,pid，借助productImageDAO，向数据库中插入数据。
+		4. 根据request.getSession().getServletContext().getRealPath( "img/productSingle")，定位到存放分类图片的目录
+		除了productSingle，还有productSingle_middle和productSingle_small。 因为每上传一张图片，都会有对应的正常，中等和小的三种大小图片，并且放在3个不同的目录下
+		5. 文件命名以保存到数据库的分类对象的id+".jpg"的格式命名
+		6. 根据步骤1获取的输入流，把浏览器提交的文件，复制到目标文件
+		7. 借助ImageUtil.change2jpg()方法把格式真正转化为jpg，而不仅仅是后缀名为.jpg
+		8. 再借助ImageUtil.resizeImage把正常大小的图片，改变大小之后，分别复制到productSingle_middle和productSingle_small目录下。
+		9. 处理完毕之后，客户端条跳转到admin_productImage_list?pid=，并带上pid。
+	 */
 	public String add(HttpServletRequest request, HttpServletResponse response, Page page) {
 		//上传文件的输入流
 		InputStream is = null;
@@ -95,16 +108,19 @@ public class ProductImageServlet extends BaseBackServlet {
 		return "@admin_productImage_list?pid="+p.getId();
 	}
 
-
-
-
-
+	
+	/**
+	 * 1.获取id
+	 * 2.根据id获取ProductImage对象pi
+	 * 3.借助productImageDAO，删除数据
+	 * 4.如果是单个照片，那么删除3张正常，中等，小号图片
+	 * 5.如果是详情图片，那么删除一张照片
+	 * 6.客户端跳转到admin_productImage_list地址
+	 */
 	public String delete(HttpServletRequest request, HttpServletResponse response, Page page) {
 		int id = Integer.parseInt(request.getParameter("id"));
 		ProductImage pi = productImageDAO.get(id);
 		productImageDAO.delete(id);
-		
-        
         if(ProductImageDAO.type_single.equals(pi.getType())){
         	String imageFolder_single= request.getSession().getServletContext().getRealPath("img/productSingle");
         	String imageFolder_small= request.getSession().getServletContext().getRealPath("img/productSingle_small");
@@ -138,6 +154,19 @@ public class ProductImageServlet extends BaseBackServlet {
 	}
 
 	
+	/**
+	 * 
+	 * 通过产品页面的图片管理访问ProductImageServlet的list()方法
+		1. 获取参数pid
+		2. 根据pid获取Product对象
+		3. 根据product对象获取单个图片的集合pisSingle
+		4. 根据product对象获取详情图片的集合pisDetail
+		5. 把product 对象，pisSingle ，pisDetail放在request上
+		6. 服务端跳转到admin/listProductImage.jsp页面
+		7. 在listProductImage.jsp，使用c:forEach 遍历pisSingle
+		8. 在listProductImage.jsp，使用c:forEach 遍历pisDetail
+	 * 
+	 */
 	public String list(HttpServletRequest request, HttpServletResponse response, Page page) {
 		int pid = Integer.parseInt(request.getParameter("pid"));
 		Product p =productDAO.get(pid);
